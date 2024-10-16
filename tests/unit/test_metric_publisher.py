@@ -1,7 +1,7 @@
 
 import unittest
 from unittest.mock import patch, MagicMock
-from src.metric_publisher import MetricPublisher
+from src.adapter.publisher.metric.metric_publisher import MetricPublisher
 
 class TestMetricPublisher(unittest.TestCase):
 

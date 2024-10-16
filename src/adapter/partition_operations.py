@@ -1,4 +1,4 @@
-from src.interfaces import IDatabaseClient
+from src.interface.interfaces import IDatabaseClient
 from dateutil.relativedelta import relativedelta
 
 class PartitionOperations(IDatabaseClient):

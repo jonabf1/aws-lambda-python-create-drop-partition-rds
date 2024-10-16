@@ -1,6 +1,6 @@
 import boto3
 from datetime import datetime
-from src.interfaces import IMetricPublisher
+from src.interface.interfaces import IMetricPublisher
 
 class MetricPublisher(IMetricPublisher):
     def __init__(self, namespace: str):

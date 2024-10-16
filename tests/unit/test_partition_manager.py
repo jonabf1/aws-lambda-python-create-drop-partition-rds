@@ -1,9 +1,9 @@
 
 import unittest
 from unittest.mock import MagicMock, patch
-from src.partition_manager import PartitionManager
+from src.adapter.partition_manager import PartitionManager
 from datetime import datetime
-import os
+
 
 class TestPartitionManager(unittest.TestCase):
 

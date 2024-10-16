@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import MagicMock
-from src.database_connection import DatabaseClient
+from src.config.database_connection import DatabaseClient
 
 class TestDatabaseClient(unittest.TestCase):
 

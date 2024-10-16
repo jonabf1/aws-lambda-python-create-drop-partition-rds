@@ -3,11 +3,11 @@ from unittest.mock import patch, MagicMock
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from dateutil.tz import tz
-from src.database_connection import DatabaseConnection
-from src.partition_operations import PartitionOperations
-from src.enviroment_util import EnviromentUtil
-from src.metric_publisher import MetricPublisher
-from src.partition_manager import PartitionManager
+from src.config.database_connection import DatabaseConnection
+from src.adapter.partition_operations import PartitionOperations
+from src.enviroment.enviroment_util import EnvironmentUtil
+from src.adapter.publisher.metric.metric_publisher import MetricPublisher
+from src.adapter.partition_manager import PartitionManager
 
 class TestSuite(unittest.TestCase):
 
@@ -60,14 +60,14 @@ class TestSuite(unittest.TestCase):
     @patch('os.getenv')
     def test_get_enviroment(self, mock_getenv):
         mock_getenv.return_value = 'test_value'
-        env_util = EnviromentUtil()
+        env_util = EnvironmentUtil()
         result = env_util.get_enviroment('test_var')
         self.assertEqual(result, 'test_value')
 
     @patch('os.getenv')
     def test_get_enviroment_missing(self, mock_getenv):
         mock_getenv.return_value = None
-        env_util = EnviromentUtil()
+        env_util = EnvironmentUtil()
         with self.assertRaises(OSError):
             env_util.get_enviroment('test_var')
 
