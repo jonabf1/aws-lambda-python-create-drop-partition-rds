@@ -1,3 +1,5 @@
+Classe principal: ~/src/handlers/lambda_handler.py 
+
 Variaveis ambientes:
 - application_name (nome do projeto, reflete no nome do grupo de logs do cloudwatch)
 - enable_drop (ativa/desativa fluxo de drop partition)
