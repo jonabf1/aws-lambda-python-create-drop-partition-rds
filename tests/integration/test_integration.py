@@ -1,57 +1,61 @@
-import pymysql
 import subprocess
 import time
+import unittest
+from dotenv import load_dotenv
+import os
 
-# Configurações de conexão com o banco de dados local MySQL
-db_host = 'localhost'
-db_user = 'testuser'
-db_password = 'testpassword'
-db_name = 'database_test_1'
+from src.handlers.lambda_handler import lambda_handler
 
-def run_docker_compose():
-    """Inicia o ambiente Docker com MySQL."""
-    subprocess.run(['docker-compose', 'up', '-d'])
-    time.sleep(10)  # Aguardar o banco de dados inicializar
+# Carregar as variáveis do arquivo .env
+load_dotenv()
 
-def stop_docker_compose():
-    """Derruba o ambiente Docker com MySQL."""
-    subprocess.run(['docker-compose', 'down'])
-    time.sleep(10)  # Aguardar o banco de dados parar
+# Carregar variáveis de ambiente
+host = os.getenv('host')
+user = os.getenv('user')
+password = os.getenv('password')
+database_name = os.getenv('database_name')
+enable_drop = os.getenv('enable_drop') == 'true'
+enable_create = os.getenv('enable_create') == 'true'
+application_name = os.getenv('application_name')
+table_name = os.getenv('table_name')
+drop_month_back = int(os.getenv('drop_month_back'))
+future_partition_months = int(os.getenv('future_partition_months'))
+maxvalue_partition_name = os.getenv('maxvalue_partition_name')
 
-def get_connection():
-    """Conecta ao banco de dados MySQL local."""
-    connection = pymysql.connect(
-        host=db_host,
-        user=db_user,
-        password=db_password,
-        database=db_name,
-        port=3306,  # Porta padrão do MySQL
-        charset='utf8mb4',
-        cursorclass=pymysql.cursors.DictCursor
-    )
-    return connection
 
-def run_partition_test():
-    """Teste de integração para verificar as partições."""
-    connection = get_connection()
+def run_docker_compose_up():
+    """Sobe o ambiente Docker."""
     try:
-        with connection.cursor() as cursor:
-            # Testar criação de partição para o mês anterior
-            cursor.execute("ALTER TABLE `table_test_1` ADD PARTITION (PARTITION p202312 VALUES LESS THAN ('2024-01-01'));")
-            connection.commit()
-            print("Partição de dezembro criada com sucesso.")
+        print("Subindo o ambiente Docker...")
+        subprocess.run(["docker-compose", "up", "--build", "-d"], check=True)
+        time.sleep(15)  # Aguarda alguns segundos para garantir que o MySQL esteja totalmente disponível
+    except subprocess.CalledProcessError as e:
+        print("Erro ao subir o Docker:", e)
+        run_docker_compose_down()  # Se der erro, derruba o Docker
+        raise e
 
-            # Testar remoção de partição para um mês anterior
-            cursor.execute("ALTER TABLE `table_test_1` DROP PARTITION p202307;")
-            connection.commit()
-            print("Partição de julho removida com sucesso.")
-    finally:
-        connection.close()
+
+def run_docker_compose_down():
+    """Derruba o ambiente Docker."""
+    print("Derrubando o ambiente Docker...")
+    subprocess.run(["docker-compose", "down"], check=True)
+
+
+class TestPartitionOperations(unittest.TestCase):
+
+    def setUp(self):
+        run_docker_compose_up()  # Sobe o Docker
+
+    def tearDown(self):
+        run_docker_compose_down()  # Derruba o Docker
+
+    def test_create_month_partition(self):
+        lambda_handler("event", "context")
+
+    def test_drop_month_partition(self):
+        lambda_handler("event", "context")
+
+
 
 if __name__ == "__main__":
-    run_docker_compose()  # Inicializar o ambiente Docker
-    try:
-        run_partition_test()  # Executar o teste de partições
-    except Exception as e:
-        stop_docker_compose()
-        print(f"Erro: {str(e)}")
+    unittest.main()

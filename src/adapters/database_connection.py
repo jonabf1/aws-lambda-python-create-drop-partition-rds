@@ -1,6 +1,6 @@
 import pymysql
 
-from src.config.enviroment_config import DatabaseEnvConfig
+from src.configs.enviroment_config import DatabaseEnvConfig
 
 class DatabaseConnection:
     def __init__(self, config: DatabaseEnvConfig):

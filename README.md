@@ -1,0 +1,14 @@
+Variaveis ambientes:
+- application_name (nome do projeto, reflete no nome do grupo de logs do cloudwatch)
+- enable_drop (ativa/desativa fluxo de drop partition)
+- enable_create (ativa/desativa fluxo de criacao de partition)
+- host (host do banco SQL)
+- user (user do banco SQL)
+- password (password do banco SQL)
+- database_name (database do banco SQL)
+- table_name (table do banco SQL)
+- type_partition
+  - É possivel fazer partições com base em um mês especifico ou com base em um range de dias, usar os valores: 'MONTH' ou 'DAY'
+  - No momento não é possivel fazer particao com dados por mais de um mês 
+- create_partition_value (valor a ser usado como referencia)
+- drop_partition_value (valor a ser usado como referencia para drop de partições)

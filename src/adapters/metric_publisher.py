@@ -1,6 +1,9 @@
 import boto3
 from datetime import datetime
-from src.interface.interfaces import IMetricPublisher
+from dateutil import tz
+
+from src.interfaces.interfaces import IMetricPublisher
+
 
 class MetricPublisher(IMetricPublisher):
     def __init__(self, namespace: str):
@@ -13,7 +16,7 @@ class MetricPublisher(IMetricPublisher):
             MetricData=[
                 {
                     'MetricName': metric_name,
-                    'Timestamp': datetime.utcnow(),
+                    'Timestamp': datetime.now(tz.gettz('America/Sao_Paulo')),
                     'Value': value,
                     'Unit': 'Count'
                 },
