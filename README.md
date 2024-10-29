@@ -1,4 +1,4 @@
-Classe principal: ~/src/handlers/lambda_handler.py 
+Classe principal: ~/src/handlers/lambda_handler.py
 Teste integrado: ~/tests/integration/runner.py
 
 Variaveis ambientes:
