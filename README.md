@@ -1,4 +1,5 @@
 Classe principal: ~/src/handlers/lambda_handler.py 
+Teste integrado: ~/tests/integration/runner.py
 
 Variaveis ambientes:
 - application_name (nome do projeto, reflete no nome do grupo de logs do cloudwatch)

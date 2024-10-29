@@ -1,6 +1,5 @@
 pymysql~=1.1.1
 boto3~=1.35.41
-cryptography
 python-dateutil~=2.9.0.post0
 pytest
-python-dotenv
+behave~=1.2.6

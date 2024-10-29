@@ -22,7 +22,8 @@ DROP PROCEDURE IF EXISTS PopulateData$$
 CREATE PROCEDURE PopulateData()
 BEGIN
     DECLARE v_start DATETIME DEFAULT NOW() - INTERVAL 5 MONTH;  -- Data inicial decrementada em 5 meses
-    DECLARE v_end DATETIME DEFAULT NOW() + INTERVAL 5 MONTH;  -- Data final incrementada em 5 meses
+    DECLARE v_end DATETIME DEFAULT NOW();
+    -- DECLARE v_end DATETIME DEFAULT NOW() + INTERVAL 5 MONTH;  -- Data final incrementada em 5 meses
     DECLARE v_date DATETIME;
     DECLARE v_partition_name VARCHAR(20);
     SET v_date = v_start;

@@ -2,7 +2,7 @@ import pymysql
 
 from src.configs.enviroment_config import DatabaseEnvConfig
 
-class DatabaseConnection:
+class Database:
     def __init__(self, config: DatabaseEnvConfig):
         self.host = config.host
         self.user = config.user
@@ -14,5 +14,6 @@ class DatabaseConnection:
             host=self.host,
             user=self.user,
             password=self.password,
-            database=self.database_name
+            database=self.database_name,
+            cursorclass=pymysql.cursors.DictCursor
         )

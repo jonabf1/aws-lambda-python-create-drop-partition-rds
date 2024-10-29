@@ -1,27 +1,26 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
-from typing import List
 
 
 class IPartitionManager(ABC):
     @abstractmethod
-    def drop_partition_by_month(self, table_name: str, months_back: int, current_date: datetime):
+    def drop_partition_by_month(self, current_date: datetime):
         pass
 
     @abstractmethod
-    def _get_existing_partitions(self, table_name: str) -> List[str]:
+    def _check_partition_exist(self, new_partition_name: str):
         pass
 
     @abstractmethod
-    def create_partitions_for_future_months(self, table_name: str, months_in_future: int, current_date: datetime, maxvalue_partition_name: str):
+    def create_partitions_for_future_months(self, current_date: datetime):
         pass
 
     @abstractmethod
-    def _add_maxvalue_partition(self, table_name: str, max_partition_name: str):
+    def _add_maxvalue_partition(self):
         pass
 
     @abstractmethod
-    def _drop_maxvalue_partition(self, table_name: str, max_partition_name: str):
+    def _drop_maxvalue_partition(self):
         pass
 
 class IPartitionQueryExecutor(ABC):
@@ -30,7 +29,7 @@ class IPartitionQueryExecutor(ABC):
         pass
 
     @abstractmethod
-    def fetch_partition_names(self, query: str) -> List[str]:
+    def partition_exist(self, query: str):
         pass
 
     @abstractmethod
