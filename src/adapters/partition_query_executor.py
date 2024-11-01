@@ -1,3 +1,5 @@
+from typing import List
+
 from src.exceptions.exceptions import PartitionErrorCreateException
 from src.interfaces.interfaces import IPartitionQueryExecutor
 
@@ -16,13 +18,13 @@ class PartitionQueryExecutor(IPartitionQueryExecutor):
             self.connection.rollback()
             raise exception_class(f"{error_message}: {e}")
 
-    def partition_exist(self, query: str):
+    def fetch_partition_names(self, query: str) -> List[str]:
         try:
             with self.connection.cursor() as cursor:
                 cursor.execute(query)
-                return cursor.fetchone() is not None
+                return [row['PARTITION_NAME'] for row in cursor.fetchall()]
         except Exception as e:
-            raise PartitionErrorCreateException(f"Error checking if partition exists: {e}")
+            raise PartitionErrorCreateException(f"Error listing partitions: {e}")
 
     def execute_count(self, query: str, exception_class) -> int:
         try:

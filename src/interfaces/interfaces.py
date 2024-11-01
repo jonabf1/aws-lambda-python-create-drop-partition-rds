@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
+from typing import List
 
 
 class IPartitionManager(ABC):
@@ -8,7 +9,7 @@ class IPartitionManager(ABC):
         pass
 
     @abstractmethod
-    def _check_partition_exist(self, new_partition_name: str):
+    def _get_existing_partitions(self) -> List[str]:
         pass
 
     @abstractmethod
@@ -29,7 +30,7 @@ class IPartitionQueryExecutor(ABC):
         pass
 
     @abstractmethod
-    def partition_exist(self, query: str):
+    def fetch_partition_names(self, query: str) -> List[str]:
         pass
 
     @abstractmethod

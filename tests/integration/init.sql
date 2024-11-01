@@ -1,10 +1,10 @@
 -- 1. Remove e cria o banco de dados
-DROP DATABASE IF EXISTS `test_db`;
-CREATE DATABASE `test_db`;
-USE `test_db`;
+DROP DATABASE IF EXISTS `database_test_1`;
+CREATE DATABASE `database_test_1`;
+USE `database_test_1`;
 
 -- 2. Cria a tabela com particionamento por RANGE COLUMNS (created_at)
-CREATE TABLE `part_table` (
+CREATE TABLE `table_test_1` (
     id INT AUTO_INCREMENT,
     created_at DATETIME NOT NULL,
     PRIMARY KEY (id, created_at)  -- Inclui 'created_at' na chave primária
@@ -23,7 +23,6 @@ CREATE PROCEDURE PopulateData()
 BEGIN
     DECLARE v_start DATETIME DEFAULT NOW() - INTERVAL 5 MONTH;  -- Data inicial decrementada em 5 meses
     DECLARE v_end DATETIME DEFAULT NOW();
-    -- DECLARE v_end DATETIME DEFAULT NOW() + INTERVAL 5 MONTH;  -- Data final incrementada em 5 meses
     DECLARE v_date DATETIME;
     DECLARE v_partition_name VARCHAR(20);
     SET v_date = v_start;
@@ -35,11 +34,12 @@ BEGIN
         -- Adiciona a partição se não existir para o mês atual de v_date
         IF NOT EXISTS (
             SELECT 1 FROM information_schema.PARTITIONS
-            WHERE TABLE_NAME = 'part_table'
-            AND PARTITION_NAME = v_partition_name
+            WHERE TABLE_SCHEMA = DATABASE()  -- Certifica-se de usar o banco de dados atual
+              AND TABLE_NAME = 'table_test_1'
+              AND PARTITION_NAME = v_partition_name
         ) THEN
             SET @sql = CONCAT(
-                'ALTER TABLE part_table ADD PARTITION (',
+                'ALTER TABLE `table_test_1` ADD PARTITION (',
                 'PARTITION ', v_partition_name, ' VALUES LESS THAN (\'',
                 DATE_FORMAT(LAST_DAY(v_date) + INTERVAL 1 DAY, '%Y-%m-%d 00:00:00'),
                 '\'));'
@@ -50,7 +50,7 @@ BEGIN
         END IF;
 
         -- Insere o dado na tabela
-        INSERT INTO part_table (created_at)
+        INSERT INTO `table_test_1` (created_at)
         VALUES (v_date);
 
         -- Incrementa a data
@@ -60,10 +60,11 @@ BEGIN
     -- Adiciona a partição catch_all com MAXVALUE ao final
     IF NOT EXISTS (
         SELECT 1 FROM information_schema.PARTITIONS
-        WHERE TABLE_NAME = 'part_table'
-        AND PARTITION_NAME = 'catch_all'
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME = 'table_test_1'
+          AND PARTITION_NAME = 'catch_all'
     ) THEN
-        SET @sql = 'ALTER TABLE part_table ADD PARTITION (PARTITION catch_all VALUES LESS THAN (MAXVALUE));';
+        SET @sql = 'ALTER TABLE `table_test_1` ADD PARTITION (PARTITION catch_all VALUES LESS THAN (MAXVALUE));';
         PREPARE stmt FROM @sql;
         EXECUTE stmt;
         DEALLOCATE PREPARE stmt;

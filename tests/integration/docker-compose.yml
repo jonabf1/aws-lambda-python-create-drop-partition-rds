@@ -1,24 +1,29 @@
-version: '3.8'
 services:
   mysql:
+    container_name: mysql_container
     image: mysql:8.0
     environment:
-      MYSQL_ROOT_PASSWORD: root_password
-      MYSQL_DATABASE: test_db
-      MYSQL_USER: test_user
-      MYSQL_PASSWORD: test_password
+      MYSQL_ROOT_PASSWORD: 'root_password'
+      MYSQL_DATABASE: 'database_test_1'
+      MYSQL_USER: 'test_user'
+      MYSQL_PASSWORD: 'test_password'
+      TZ: 'America/Sao_Paulo'
     ports:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-    command: --default-authentication-plugin=caching_sha2_password --init-file=/docker-entrypoint-initdb.d/init.sql
+    command: >
+       --default-authentication-plugin=caching_sha2_password
+       --init-file=/docker-entrypoint-initdb.d/init.sql
+       --log-error-verbosity=3 
+       --bind-address=0.0.0.0
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      retries: 5
-      start_period: 30s
-      timeout: 10s
+      interval: 1s
+      retries: 10
+      start_period: 3s
+      timeout: 1s
 
 volumes:
   mysql_data:
