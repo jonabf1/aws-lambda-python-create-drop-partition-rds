@@ -1,3 +1,5 @@
+import time
+
 from behave import given, when, then
 import os
 
@@ -8,17 +10,19 @@ from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from dateutil.tz import tz
 
-
 def get_database_connection():
     set_enviroments()
-    return pymysql.connect(
-        host=os.getenv('database_host'),
-        user=os.getenv('database_user'),
-        password=os.getenv('database_password'),
-        database=os.getenv('database_name'),
-        cursorclass=pymysql.cursors.DictCursor
-    )
-
+    for _ in range(30):  # tenta conectar por até 30 segundos
+        try:
+            return pymysql.connect(
+                host=os.getenv('database_host'),
+                user=os.getenv('database_user'),
+                password=os.getenv('database_password'),
+                database=os.getenv('database_name'),
+                cursorclass=pymysql.cursors.DictCursor
+            )
+        except pymysql.MySQLError:
+            time.sleep(1)
 
 def set_enviroments():
     os.environ['database_host'] = 'localhost'
@@ -130,7 +134,7 @@ def step_insert_many_items(context, anos):
         counter = 0
         start_date = datetime.now()
         end_date = start_date + relativedelta(years=anos)
-        while start_date < end_date:
+        while start_date <= end_date:
             counter += 1
             cursor.execute(f"""
                 INSERT INTO {os.getenv('database_name')}.{os.getenv('table_name')} (created_at) 
@@ -150,7 +154,7 @@ def step_insert_many_items(context, quantidade):
         counter = 0
         start_date = datetime.now()
         end_date = start_date + relativedelta(months=meses)
-        while start_date < end_date:
+        while start_date <= end_date:
             counter += 1
             cursor.execute(f"""
                 INSERT INTO {os.getenv('database_name')}.{os.getenv('table_name')} (created_at) 

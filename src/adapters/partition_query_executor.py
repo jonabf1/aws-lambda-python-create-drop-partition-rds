@@ -12,7 +12,6 @@ class PartitionQueryExecutor(IPartitionQueryExecutor):
         try:
             with self.connection.cursor() as cursor:
                 cursor.execute(query)
-                print(f"Successfully executed: {query}")
                 self.connection.commit()
         except Exception as e:
             self.connection.rollback()
