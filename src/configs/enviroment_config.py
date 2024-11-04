@@ -21,7 +21,7 @@ class DatabaseEnvConfig:
 
 class PartitionEnvConfig:
     def __init__(self, env_util: IEnvironmentUtil):
-        self.drop_months_back = self.convert_value_to_int(env_util.get_environment('drop_month_back'))
+        self.months_to_keep = self.convert_value_to_int(env_util.get_environment('months_to_keep'))
         self.future_partition_months = self.convert_value_to_int(env_util.get_environment('future_partition_months'))
         self.maxvalue_partition_name = env_util.get_environment('maxvalue_partition_name')
 

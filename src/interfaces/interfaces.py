@@ -1,11 +1,10 @@
 from abc import ABC, abstractmethod
-from datetime import datetime
 from typing import List
 
 
 class IPartitionManager(ABC):
     @abstractmethod
-    def drop_partition_by_month(self, current_date: datetime):
+    def drop_older_partitions(self):
         pass
 
     @abstractmethod
@@ -13,7 +12,7 @@ class IPartitionManager(ABC):
         pass
 
     @abstractmethod
-    def create_partitions_for_future_months(self, current_date: datetime):
+    def create_partitions_for_future_months(self):
         pass
 
     @abstractmethod
