@@ -23,6 +23,10 @@ class IPartitionManager(ABC):
     def _drop_maxvalue_partition(self):
         pass
 
+    @abstractmethod
+    def _get_previous_months(self, month_list) -> List[str]:
+        pass
+
 class IPartitionQueryExecutor(ABC):
     @abstractmethod
     def execute(self, query: str, exception_class, error_message: str):

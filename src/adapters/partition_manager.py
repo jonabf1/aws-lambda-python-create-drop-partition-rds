@@ -29,18 +29,17 @@ class PartitionManager(IPartitionManager):
 
     def drop_older_partitions(self):
         existing_partitions = self._get_existing_partitions()
+        previous_existing_months = self._get_previous_months(existing_partitions)
+
         partitions_to_drop = []
-        partitions_to_keep = [
-            PartitionNameGenerator.generate_partition_name(self.current_date),
-            self.partition_env_config.maxvalue_partition_name
-        ]
+        partitions_to_keep = []
 
         for i in range(1, self.partition_env_config.months_to_keep + 1):
             partition_date = self.current_date - relativedelta(months=i)
             partition_name = PartitionNameGenerator.generate_partition_name(partition_date)
             partitions_to_keep.append(partition_name)
 
-        for partition_name in existing_partitions:
+        for partition_name in previous_existing_months:
             if partition_name not in partitions_to_keep:
                 partitions_to_drop.append(partition_name)
 
@@ -119,3 +118,17 @@ class PartitionManager(IPartitionManager):
             logging.error(f"Particao MaxValue '{self.partition_env_config.maxvalue_partition_name}' possue itens!")
             return True
         return False
+
+    def _get_previous_months(self, month_list) -> List[str]:
+        previous_months = []
+
+        for item in month_list:
+            # Ignora a particao atual e a MaxValue
+            if item == self.partition_env_config.maxvalue_partition_name or item ==  PartitionNameGenerator.generate_partition_name(self.current_date):
+                continue
+
+            item_date = datetime.strptime(item, '%b%Y').replace(tzinfo=tz.gettz('America/Sao_Paulo'))
+            if item_date < self.current_date:
+                previous_months.append(item)
+
+        return previous_months
